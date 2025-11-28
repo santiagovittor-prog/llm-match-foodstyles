@@ -24,3 +24,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+:root {
+  --fs-bg: #f9fafb;
+  --fs-text: #111827;
+  --fs-card-bg: #ffffff;
+  --fs-border: #e5e7eb;
+  --fs-accent: #ee612c;
+  --fs-accent-soft: #ffe0d4;
+  --fs-muted: #6b7280;
+}
+
+[data-theme="dark"] {
+  --fs-bg: #020617;
+  --fs-text: #e5e7eb;
+  --fs-card-bg: #0b1120;
+  --fs-border: #1f2937;
+  --fs-accent: #ee612c;
+  --fs-accent-soft: #7c2d12;
+  --fs-muted: #9ca3af;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--fs-bg);
+  color: var(--fs-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}

@@ -1,36 +1,42 @@
 @import "tailwindcss";
 
-/* FoodStyles UI refresh
-   - Orange-forward, professional
-   - Glassmorphism with depth (no visible borders)
-   - Subtle hover and focus
-   - Clean typography and spacing
+/*
+  FoodStyles UI (2026)
+  Goals:
+  - Orange-forward, professional
+  - Glass surfaces with depth (no harsh outlines)
+  - Subtle hover/focus
+  - Remove background banding under glass (stable base + fixed glows)
 */
 
 :root {
+  /* Brand */
   --fs-accent: #ee612c;
   --fs-accent-2: #ff7a45;
 
+  /* Text */
   --fs-text: #0b1220;
   --fs-muted: rgba(11, 18, 32, 0.62);
 
-  --fs-bg-0: #fbfcff;
-  --fs-bg-1: #f3f6fb;
+  /* Stable background (no vertical gradient) */
+  --fs-page-bg: #f6f8fc;
 
+  /* Glass layers */
   --fs-glass: rgba(255, 255, 255, 0.62);
   --fs-glass-quiet: rgba(255, 255, 255, 0.46);
   --fs-glass-strong: rgba(255, 255, 255, 0.78);
 
   --fs-radius: 18px;
 
+  /* Shadows (no borders needed) */
   --fs-shadow: 0 12px 44px rgba(2, 6, 23, 0.10);
   --fs-shadow-hover: 0 18px 64px rgba(2, 6, 23, 0.14);
   --fs-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 
   --fs-ring: 0 0 0 4px rgba(238, 97, 44, 0.14);
 
-  /* Compatibility variables (some code may still reference these) */
-  --fs-bg: var(--fs-bg-0);
+  /* Compatibility variables some code may still reference */
+  --fs-bg: var(--fs-page-bg);
   --fs-card-bg: var(--fs-glass);
   --fs-border: rgba(2, 6, 23, 0.06);
   --fs-accent-soft: rgba(238, 97, 44, 0.14);
@@ -40,8 +46,7 @@
   --fs-text: rgba(255, 255, 255, 0.92);
   --fs-muted: rgba(255, 255, 255, 0.62);
 
-  --fs-bg-0: #05070c;
-  --fs-bg-1: #0a1220;
+  --fs-page-bg: #05070c;
 
   --fs-glass: rgba(15, 23, 42, 0.50);
   --fs-glass-quiet: rgba(15, 23, 42, 0.34);
@@ -53,7 +58,7 @@
 
   --fs-ring: 0 0 0 4px rgba(238, 97, 44, 0.22);
 
-  --fs-bg: var(--fs-bg-0);
+  --fs-bg: var(--fs-page-bg);
   --fs-card-bg: var(--fs-glass);
   --fs-border: rgba(255, 255, 255, 0.06);
   --fs-accent-soft: rgba(238, 97, 44, 0.18);
@@ -62,6 +67,10 @@
 html,
 body {
   height: 100%;
+}
+
+html {
+  background: var(--fs-page-bg);
 }
 
 *,
@@ -78,12 +87,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
 
-  background:
-    radial-gradient(900px 420px at 18% -8%, rgba(238, 97, 44, 0.20), transparent 60%),
-    radial-gradient(700px 320px at 90% 10%, rgba(238, 97, 44, 0.12), transparent 60%),
-    linear-gradient(180deg, var(--fs-bg-0), var(--fs-bg-1));
+  background: transparent;
 }
 
+/* Fixed glow layer to avoid “banding” under translucent cards */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(238, 97, 44, 0.18), transparent 60%),
+    radial-gradient(900px 520px at 92% 0%, rgba(238, 97, 44, 0.12), transparent 65%);
+}
+
+/* Selection */
 ::selection {
   background: rgba(238, 97, 44, 0.20);
 }
@@ -155,11 +175,8 @@ textarea {
   overflow: hidden;
   border-radius: var(--fs-radius);
 
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--fs-glass) 92%, transparent),
-    color-mix(in srgb, var(--fs-glass-quiet) 92%, transparent)
-  );
+  /* simple + robust (no color-mix dependency) */
+  background: linear-gradient(180deg, var(--fs-glass), var(--fs-glass-quiet));
 
   box-shadow: var(--fs-shadow), var(--fs-shadow-inset);
 
@@ -176,8 +193,8 @@ textarea {
   pointer-events: none;
 
   background:
-    radial-gradient(600px 160px at 18% 0%, rgba(255, 255, 255, 0.55), transparent 55%),
-    radial-gradient(520px 140px at 85% 10%, rgba(238, 97, 44, 0.12), transparent 60%);
+    radial-gradient(600px 160px at 18% 0%, rgba(255, 255, 255, 0.50), transparent 55%),
+    radial-gradient(520px 140px at 85% 10%, rgba(238, 97, 44, 0.10), transparent 60%);
   opacity: 0.55;
 }
 
@@ -321,7 +338,8 @@ textarea {
 }
 
 .fs-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
 /* Segmented control */

@@ -1,4 +1,4 @@
-import type { StartResponse } from "@/components/types";
+import type { StartResponse } from "../types";
 
 type Props = {
   lastRun: StartResponse | null;
@@ -23,12 +23,27 @@ export default function LastRunCard(props: Props) {
               <strong>{props.lastRun.parallelism}</strong>.
             </div>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, fontSize: 13, marginBottom: 10 }}>
-              <div>Same <strong>{props.lastRun.metrics.count_same}</strong></div>
-              <div>Different <strong>{props.lastRun.metrics.count_diff}</strong></div>
-              <div>Unsure <strong>{props.lastRun.metrics.count_unsure}</strong></div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 12,
+                fontSize: 13,
+                marginBottom: 10,
+              }}
+            >
               <div>
-                Duration <strong>{(props.lastRun.metrics.duration_ms / 1000).toFixed(1)}s</strong>
+                Same <strong>{props.lastRun.metrics.count_same}</strong>
+              </div>
+              <div>
+                Different <strong>{props.lastRun.metrics.count_diff}</strong>
+              </div>
+              <div>
+                Unsure <strong>{props.lastRun.metrics.count_unsure}</strong>
+              </div>
+              <div>
+                Duration{" "}
+                <strong>{(props.lastRun.metrics.duration_ms / 1000).toFixed(1)}s</strong>
               </div>
             </div>
 
@@ -39,10 +54,18 @@ export default function LastRunCard(props: Props) {
                 </div>
 
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 12, fontSize: 13 }}>
-                  <div>Correct <strong>{props.lastRun.testingMetrics.correct}</strong></div>
-                  <div>Wrong <strong>{props.lastRun.testingMetrics.wrong}</strong></div>
-                  <div>Unsure <strong>{props.lastRun.testingMetrics.unsure}</strong></div>
-                  <div>Labelled <strong>{props.lastRun.testingMetrics.totalLabelled}</strong></div>
+                  <div>
+                    Correct <strong>{props.lastRun.testingMetrics.correct}</strong>
+                  </div>
+                  <div>
+                    Wrong <strong>{props.lastRun.testingMetrics.wrong}</strong>
+                  </div>
+                  <div>
+                    Unsure <strong>{props.lastRun.testingMetrics.unsure}</strong>
+                  </div>
+                  <div>
+                    Labelled <strong>{props.lastRun.testingMetrics.totalLabelled}</strong>
+                  </div>
                   <div>
                     Strict accuracy{" "}
                     <strong>

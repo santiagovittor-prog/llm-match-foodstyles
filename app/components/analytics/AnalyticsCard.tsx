@@ -1,4 +1,6 @@
-import type { AnalyticsComputed, AnalyticsTab } from "@/components/types";
+import type { AnalyticsComputed, AnalyticsTab } from "../types";
+import type { PieLabelRenderProps } from "recharts";
+import type { Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import {
   PieChart,
   Pie,
@@ -25,6 +27,25 @@ type Props = {
 };
 
 export default function AnalyticsCard(props: Props) {
+  const runRowType = {} as AnalyticsComputed["runSeries"][number];
+
+  // Recharts wants a PieLabelRenderProps signature; name can be undefined.
+  const pieLabel = (p: PieLabelRenderProps) => {
+    const name = typeof p.name === "string" ? p.name : "";
+    const percent = typeof p.percent === "number" ? p.percent : 0;
+    return `${name} ${(percent * 100).toFixed(0)}%`;
+  };
+
+  // labelFormatter expects readonly payload array
+  const tooltipLabelFormatter = (
+    label: any,
+    payload: readonly Payload<ValueType, string>[]
+  ) => {
+    const first = payload?.[0] as any;
+    const p = first?.payload as any;
+    return (p?.label as string) ?? String(label ?? "");
+  };
+
   return (
     <section className="fs-card" style={{ marginBottom: 16 }}>
       <div className="fs-cardHead">
@@ -96,15 +117,16 @@ export default function AnalyticsCard(props: Props) {
                         dataKey="value"
                         nameKey="name"
                         outerRadius={85}
-                        label={({ name, percent }) => {
-                          const pct = percent ?? 0;
-                          return `${name} ${(pct * 100).toFixed(0)}%`;
-                        }}
+                        label={pieLabel}
                       >
-                        {props.analytics.verdictPieData.map((_, index) => (
+                        {props.analytics.verdictPieData.map((item, index) => (
                           <Cell
-                            key={index}
-                            fill={props.analytics.verdictColors[index % props.analytics.verdictColors.length]}
+                            key={`${item.name}-${index}`}
+                            fill={
+                              props.analytics.verdictColors[
+                                index % props.analytics.verdictColors.length
+                              ]
+                            }
                           />
                         ))}
                       </Pie>
@@ -123,7 +145,11 @@ export default function AnalyticsCard(props: Props) {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="index" />
                       <YAxis yAxisId="left" />
-                      <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => Number(v).toFixed(1)} />
+                      <YAxis
+                        yAxisId="right"
+                        orientation="right"
+                        tickFormatter={(v: number) => Number(v).toFixed(1)}
+                      />
                       <Tooltip />
                       <Legend />
                       <Bar yAxisId="left" dataKey="rows" name="Rows" fill="#f97316" />
@@ -153,21 +179,17 @@ export default function AnalyticsCard(props: Props) {
                       type="number"
                       dataKey="throughput"
                       name="Rows/sec"
-                      tickFormatter={(v) => Number(v).toFixed(1)}
+                      tickFormatter={(v: number) => Number(v).toFixed(1)}
                     />
                     <YAxis type="number" dataKey="unsureRate" name="Unsure percentage" />
                     <ZAxis type="number" dataKey="rows" range={[60, 400]} name="Rows" />
                     <Tooltip
-                      formatter={(value: any, name: any) => {
+                      formatter={(value: unknown, name: string) => {
                         if (name === "unsureRate") return [`${Number(value).toFixed(1)}%`, name];
                         if (name === "throughput") return [`${Number(value).toFixed(2)}`, name];
-                        return [value, name];
+                        return [String(value), name];
                       }}
-                      labelFormatter={(_, payload) => {
-                        if (!payload || payload.length === 0) return "";
-                        const p = payload[0].payload as any;
-                        return p.label || `Run ${p.index}`;
-                      }}
+                      labelFormatter={tooltipLabelFormatter}
                     />
                     <Scatter name="Run" data={props.analytics.runSeries} fill="#f97316" />
                   </ScatterChart>
@@ -192,7 +214,7 @@ export default function AnalyticsCard(props: Props) {
                     {props.analytics.runSeries
                       .slice()
                       .reverse()
-                      .map((r) => (
+                      .map((r: typeof runRowType) => (
                         <tr key={r.index}>
                           <td>{r.index}</td>
                           <td>{r.rows}</td>
